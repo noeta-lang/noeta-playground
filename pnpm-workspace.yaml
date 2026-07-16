@@ -1,0 +1,5 @@
+# Postinstall scripts are blocked by default; wrangler needs these to fetch its binaries.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true

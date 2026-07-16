@@ -1,0 +1,11 @@
+{
+  // noeta-playground Worker — served at play.noeta.dev. Deploy with your own Cloudflare account:
+  //   pnpm run deploy
+  // To bind the custom domain, add a route once the zone is on Cloudflare:
+  //   "routes": [{ "pattern": "play.noeta.dev", "custom_domain": true }]
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "noeta-playground",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-07-01",
+  "observability": { "enabled": true }
+}
