@@ -54,7 +54,9 @@ echo r.body()
 `,
   "debug me": `// Set a breakpoint on the \`total = total + v\` line (click the
 // gutter), hit Debug, and step: the call stack and each frame's
-// locals update at every pause.
+// locals update at every pause — and the console evaluates
+// expressions against the paused frame (try \`total + v\`, or even
+// a call like \`sum([100])\`).
 
 fn sum(values: List<int>): int {
   mut total = 0;

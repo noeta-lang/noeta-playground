@@ -16,10 +16,12 @@ type leaves the tab.
   go-to-definition, and signature help come straight from the engine's `noeta-ide` exports:
   the exact DocumentStore `noeta lsp` adapts over, so the answers are the LSP's answers
   with none of the JSON-RPC.
-- **Debug** — gutter breakpoints, continue/step over/in/out, call stack, and per-frame
-  variables. The engine pauses by parking its worker on `Atomics.wait` until the UI writes a
-  resume command into shared memory — which is why the site serves COOP/COEP headers
-  (`public/_headers`): `SharedArrayBuffer` needs a crossOriginIsolated page.
+- **Debug** — gutter breakpoints, continue/step over/in/out, call stack, per-frame variables
+  (loop and match bindings included), and a **console** that evaluates full-language
+  expressions — calls included — against the selected paused frame, type-checked against that
+  frame's locals before they run. The engine pauses by parking its worker on `Atomics.wait`
+  until the UI writes a resume command into shared memory — which is why the site serves
+  COOP/COEP headers (`public/_headers`): `SharedArrayBuffer` needs a crossOriginIsolated page.
 - **Format** (the canonical `noeta fmt`) and **Share** (the buffer in the URL fragment,
   byte-compatible with the reference playground's `#code=v1:` links).
 

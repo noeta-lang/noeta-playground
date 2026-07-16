@@ -403,6 +403,97 @@
   color: var(--paper-2);
 }
 
+/* --- Debug console --- */
+
+.console {
+  border-top: 1px solid var(--line);
+  padding: 0.55rem 0.75rem 0.7rem;
+}
+
+.console h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--paper-2);
+}
+
+.console-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  max-height: 8.5rem;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.console-log:not(:empty) {
+  margin-bottom: 0.45rem;
+}
+
+.console-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.06rem 0.15rem;
+}
+
+.console-prompt {
+  color: var(--signal);
+}
+
+.console-echo .console-text {
+  color: var(--paper-1);
+}
+
+.console-input::placeholder {
+  color: var(--paper-2);
+  opacity: 0.8;
+}
+
+.console-text {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.console-input {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--paper-0);
+  background: var(--ink-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  padding: 0.4rem 0.6rem;
+}
+
+.console-input:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 1px;
+}
+
+.console-input:disabled {
+  opacity: 0.5;
+}
+
+.console-value .console-text {
+  color: var(--syn-string);
+}
+
+.console-error .console-text {
+  color: var(--syn-number);
+}
+
+.console-type {
+  color: var(--syn-type);
+  font-size: 0.7rem;
+}
+
 /* --- Monaco decorations: breakpoints + the paused line --- */
 
 .bp-glyph {

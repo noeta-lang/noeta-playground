@@ -36,6 +36,8 @@ const stepButtons = {
   stepIn: $("step-in") as HTMLButtonElement,
   stepOut: $("step-out") as HTMLButtonElement,
 };
+const consoleLog = $("console-log");
+const consoleInput = $("console-input") as HTMLInputElement;
 
 function setStatus(text: string, tone: "" | "ok" | "err" = "") {
   statusLine.textContent = text;
@@ -231,20 +233,24 @@ async function doShare() {
 const pausedDecoration = editor.createDecorationsCollection([]);
 let resumeCurrent: ((command: DebugCommand) => void) | null = null;
 let debugging = false;
+/** The stack frame the Variables panel and console evals target (innermost-first index). */
+let selectedFrame = 0;
 
 function setStepButtonsEnabled(enabled: boolean) {
   for (const button of Object.values(stepButtons)) button.disabled = !enabled;
+  consoleInput.disabled = !enabled;
 }
 
-function renderPaused(state: PausedState) {
-  // Stack: innermost frame first, click to inspect any frame's locals.
+function renderPaused(state: PausedState, preserveSelection = false) {
+  if (!preserveSelection || selectedFrame >= state.frames.length) selectedFrame = 0;
+  // Stack: innermost frame first, click to inspect any frame's locals (and aim console evals).
   stackList.replaceChildren();
   state.frames.forEach((frame, index) => {
     const item = document.createElement("li");
     const button = document.createElement("button");
     button.type = "button";
     button.className = "frame";
-    if (index === 0) button.dataset.active = "true";
+    if (index === selectedFrame) button.dataset.active = "true";
     const name = document.createElement("span");
     name.className = "frame-name";
     name.textContent = frame.name;
@@ -253,6 +259,7 @@ function renderPaused(state: PausedState) {
     where.textContent = frame.line > 0 ? `:${frame.line}` : "";
     button.append(name, where);
     button.addEventListener("click", () => {
+      selectedFrame = index;
       stackList.querySelectorAll(".frame").forEach((el) => delete (el as HTMLElement).dataset.active);
       button.dataset.active = "true";
       renderLocals(state.frames[index]!.locals);
@@ -261,7 +268,7 @@ function renderPaused(state: PausedState) {
     item.append(button);
     stackList.append(item);
   });
-  renderLocals(state.frames[0]?.locals ?? []);
+  renderLocals(state.frames[selectedFrame]?.locals ?? []);
 
   // Highlight the paused line (innermost frame).
   const line = state.frames[0]?.line ?? 0;
@@ -306,6 +313,30 @@ function renderLocals(locals: { name: string; value: string; ty: string }[]) {
   }
 }
 
+function consoleAppend(kind: "input" | "value" | "error", text: string, ty?: string) {
+  const row = document.createElement("div");
+  // "console-echo" for typed entries — "console-input" is the input element's own class.
+  row.className = `console-row ${kind === "input" ? "console-echo" : `console-${kind}`}`;
+  if (kind === "input") {
+    const prompt = document.createElement("span");
+    prompt.className = "console-prompt";
+    prompt.textContent = "›";
+    row.append(prompt);
+  }
+  const body = document.createElement("span");
+  body.className = "console-text";
+  body.textContent = text;
+  row.append(body);
+  if (ty) {
+    const type = document.createElement("span");
+    type.className = "console-type";
+    type.textContent = ty;
+    row.append(type);
+  }
+  consoleLog.append(row);
+  consoleLog.scrollTop = consoleLog.scrollHeight;
+}
+
 function leavePause() {
   pausedDecoration.set([]);
   setStepButtonsEnabled(false);
@@ -333,6 +364,7 @@ async function doDebug() {
   debugPanel.hidden = false;
   stackList.replaceChildren();
   varsBody.replaceChildren();
+  consoleLog.replaceChildren();
   setStepButtonsEnabled(false);
   stopButton.hidden = false;
   const lines = breakpointLines();
@@ -340,8 +372,15 @@ async function doDebug() {
   try {
     const result = await engine.debug(model.getValue(), lines, (state, resume) => {
       resumeCurrent = resume;
-      renderPaused(state);
+      // A payload with an eval outcome is the same pause continuing (the console answered);
+      // keep the user's frame selection then, reset to the innermost on a fresh stop.
+      if (state.eval) {
+        if (state.eval.ok) consoleAppend("value", state.eval.value, state.eval.ty);
+        else consoleAppend("error", state.eval.error);
+      }
+      renderPaused(state, !!state.eval);
       setStepButtonsEnabled(true);
+      if (state.eval) consoleInput.focus();
       setStatus(`paused: ${state.reason}`, "");
     });
     renderRunResult(result);
@@ -359,6 +398,21 @@ function sendResume(command: DebugCommand) {
   leavePause();
   resume(command);
 }
+
+consoleInput.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" || !resumeCurrent) return;
+  const expr = consoleInput.value.trim();
+  if (!expr) return;
+  consoleAppend("input", expr);
+  consoleInput.value = "";
+  // An eval is a resume like any other from the worker's point of view (the run clock ticks
+  // while the fragment executes), but the program stays paused — the next paused event carries
+  // the outcome and re-enables the controls.
+  const resume = resumeCurrent;
+  resumeCurrent = null;
+  setStepButtonsEnabled(false);
+  resume({ action: "eval", expr, frame: selectedFrame });
+});
 
 stepButtons.continue.addEventListener("click", () => sendResume({ action: "continue" }));
 stepButtons.stepOver.addEventListener("click", () => sendResume({ action: "stepOver" }));

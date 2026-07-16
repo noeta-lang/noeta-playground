@@ -116,6 +116,33 @@ let vars = await page.$$eval("#vars .var", (els) =>
 );
 console.log(`✓ paused at breakpoint; stack ${frames.join(" → ")}; locals ${vars.join(", ")}`);
 assert.ok(vars.some((v) => v.startsWith("total=0:int")), `first-iteration total in ${vars}`);
+// The loop variable is a visible local too (the compiler records loop/match bindings).
+assert.ok(vars.some((v) => v.startsWith("v=3:int")), `loop var v in ${vars}`);
+
+// The debug console: an expression over the frame's locals, then a CALL — the program stays
+// paused (same stack), and each outcome lands in the log with its type.
+await page.fill("#console-input", "total + v");
+await page.press("#console-input", "Enter");
+await page.waitForSelector(".console-value", { timeout: 15000 });
+let consoleValues = await page.$$eval(".console-value", (els) =>
+  els.map((e) => `${e.querySelector(".console-text").textContent}:${e.querySelector(".console-type").textContent}`),
+);
+assert.deepEqual(consoleValues, ["3:int"]);
+await page.fill("#console-input", "sum([100, 200])");
+await page.press("#console-input", "Enter");
+await page.waitForFunction(() => document.querySelectorAll(".console-value").length === 2, null, { timeout: 15000 });
+consoleValues = await page.$$eval(".console-value", (els) =>
+  els.map((e) => `${e.querySelector(".console-text").textContent}:${e.querySelector(".console-type").textContent}`),
+);
+assert.deepEqual(consoleValues, ["3:int", "300:int"]);
+// An ill-typed fragment is refused inline with its E-code; still paused.
+await page.fill("#console-input", 'total + "s"');
+await page.press("#console-input", "Enter");
+await page.waitForSelector(".console-error", { timeout: 15000 });
+const consoleError = await page.textContent(".console-error .console-text");
+assert.match(consoleError, /E\d{4}/);
+assert.equal(await page.textContent("#status"), "paused: breakpoint");
+console.log(`✓ debug console: total + v = 3, sum([100, 200]) = 300, ill-typed refused (${consoleError.slice(0, 30)}…)`);
 if (SHOTS) await page.screenshot({ path: `${SHOTS}/play-debug-paused.png` });
 
 // Step over → the loop advances; continue twice through remaining hits.

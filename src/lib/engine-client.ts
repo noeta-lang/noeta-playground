@@ -45,6 +45,10 @@ export interface PausedFrame {
 export interface PausedState {
   reason: string;
   frames: PausedFrame[];
+  /** A console eval's outcome, present on the trampoline re-entry payload that follows an
+   * `eval` command. The frames alongside are re-captured, so a fragment's side effects are
+   * already visible. */
+  eval?: { ok: true; value: string; ty: string } | { ok: false; error: string } | null;
 }
 
 export type DebugCommand =
@@ -52,7 +56,11 @@ export type DebugCommand =
   | { action: "stepOver" }
   | { action: "stepIn" }
   | { action: "stepOut" }
-  | { action: "terminate" };
+  | { action: "terminate" }
+  /** Evaluate `expr` against paused frame `frame` (innermost-first). Full language — calls
+   * included — type-checked against the frame's locals before it runs; the program stays
+   * paused, and the outcome arrives on the next paused event. */
+  | { action: "eval"; expr: string; frame: number };
 
 const RUN_TIMEOUT_MS = 5000;
 const LANGUAGE_TIMEOUT_MS = 10000;

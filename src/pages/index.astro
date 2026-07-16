@@ -59,6 +59,19 @@ import Base from "../layouts/Base.astro";
                 <div id="vars" class="vars"></div>
               </div>
             </div>
+            <div class="console">
+              <h3>Console</h3>
+              <div id="console-log" class="console-log" aria-live="polite"></div>
+              <input
+                id="console-input"
+                class="console-input"
+                type="text"
+                placeholder="evaluate in the selected frame — full language, calls included"
+                autocomplete="off"
+                spellcheck="false"
+                disabled
+              />
+            </div>
           </section>
 
           <section class="panel output-panel" aria-label="Program output">
