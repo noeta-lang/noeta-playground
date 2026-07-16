@@ -75,6 +75,9 @@ attachDiagnostics(model, renderDiagnostics);
  * ride Monaco's decoration tracking, so they follow the code as it moves. --- */
 
 const breakpoints = editor.createDecorationsCollection([]);
+// The line currently showing the paused ▶ arrow, or 0. Its breakpoint dot is
+// suppressed so the two glyphs never overlap in the same gutter cell.
+let pausedGlyphLine = 0;
 
 function breakpointLines(): number[] {
   const lines = new Set<number>();
@@ -94,13 +97,22 @@ function toggleBreakpoint(lineNumber: number) {
   breakpoints.set(next);
 }
 
+/** Re-emit the breakpoint decorations, hiding the dot on `pausedGlyphLine` so the paused arrow
+ * owns that gutter cell. The ranges (and thus `breakpointLines()`) are unchanged. */
+function refreshBreakpointGlyphs() {
+  breakpoints.set(breakpoints.getRanges().map((r) => breakpointDecoration(r.startLineNumber)));
+}
+
 function breakpointDecoration(lineNumber: number): monaco.editor.IModelDeltaDecoration {
+  const underArrow = lineNumber === pausedGlyphLine;
   return {
     range: new monaco.Range(lineNumber, 1, lineNumber, 1),
     options: {
       isWholeLine: false,
-      glyphMarginClassName: "bp-glyph",
-      glyphMarginHoverMessage: { value: "Breakpoint — hit Debug to use it" },
+      // No glyph while the paused arrow sits on this line; the breakpoint still exists (its range
+      // is tracked, so continue/step still honor it and the dot returns when the arrow moves on).
+      glyphMarginClassName: underArrow ? undefined : "bp-glyph",
+      glyphMarginHoverMessage: underArrow ? undefined : { value: "Breakpoint — hit Debug to use it" },
       stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
     },
   };
@@ -276,8 +288,11 @@ function renderPaused(state: PausedState, preserveSelection = false) {
   });
   renderLocals(state.frames[selectedFrame]?.locals ?? []);
 
-  // Highlight the paused line (innermost frame).
+  // Highlight the paused line (innermost frame), and suppress any breakpoint dot on it so the
+  // arrow owns the gutter cell.
   const line = state.frames[0]?.line ?? 0;
+  pausedGlyphLine = line;
+  refreshBreakpointGlyphs();
   if (line > 0) {
     pausedDecoration.set([
       {
@@ -366,6 +381,8 @@ function consoleAppend(kind: "input" | "value" | "error", text: string, ty?: str
 
 function leavePause() {
   pausedDecoration.set([]);
+  pausedGlyphLine = 0;
+  refreshBreakpointGlyphs(); // the dot returns as the arrow leaves this line
   setStepButtonsEnabled(false);
   setStatus("running…");
 }
@@ -374,6 +391,8 @@ function endDebugSession() {
   debugging = false;
   resumeCurrent = null;
   pausedDecoration.set([]);
+  pausedGlyphLine = 0;
+  refreshBreakpointGlyphs();
   debugPanel.hidden = true;
   stopButton.hidden = true;
   editor.updateOptions({ readOnly: false });

@@ -108,6 +108,14 @@ assert.deepEqual(await page.evaluate(() => window.__playground.breakpointLines()
 await page.click("#debug");
 await page.waitForFunction(() => document.getElementById("status")?.textContent?.startsWith("paused"), null, { timeout: 15000 });
 assert.equal(await page.textContent("#status"), "paused: breakpoint");
+// The pause landed on the breakpointed line, so the gutter shows the paused ▶ arrow and NOT the
+// breakpoint dot (they must not overlap in the same cell).
+const gutterGlyphs = await page.$$eval(".cgmr", (els) => els.map((e) => e.className));
+const arrowCount = gutterGlyphs.filter((c) => c.includes("paused-glyph")).length;
+const dotCount = gutterGlyphs.filter((c) => c.includes("bp-glyph")).length;
+assert.equal(arrowCount, 1, `one paused arrow (got ${arrowCount})`);
+assert.equal(dotCount, 0, `no breakpoint dot under the arrow (got ${dotCount})`);
+console.log("✓ paused arrow replaces the breakpoint dot in the gutter (no overlap)");
 // The stack shows sum → main; the variables show total and v.
 const frames = await page.$$eval("#stack .frame-name", (els) => els.map((e) => e.textContent));
 assert.deepEqual(frames, ["sum", "main"]);
