@@ -1,0 +1,55 @@
+---
+/* Page shell: the shared @noeta/theme (fonts + tokens + chrome), this site's
+ * playground styles, head, header/footer, and the fixed atmospheric
+ * background. */
+import "@noeta/theme/fonts.css";
+import "@noeta/theme/theme.css";
+import "../styles/playground.css";
+import BaseHead from "../components/BaseHead.astro";
+import { SITE } from "../lib/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+}
+
+const { title, description, path } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} path={path} />
+  </head>
+  <body>
+    <div class="field" aria-hidden="true"></div>
+    <header class="site-head">
+      <div class="wrap">
+        <a class="wordmark" href="/">noeta<span class="tld">.dev/play</span></a>
+        <nav class="site-nav" aria-label="Site">
+          <a href={SITE.links.home}>noeta.dev</a>
+          <a href={SITE.links.docs}>docs</a>
+          <a href={SITE.links.registry}>registry</a>
+          <a href={SITE.links.github}>github</a>
+        </nav>
+      </div>
+    </header>
+    <slot />
+    <footer class="site-foot">
+      <div class="wrap">
+        <span class="tagline">AI-native, <em>human-first.</em></span>
+        <nav class="foot-nav" aria-label="Footer">
+          <a href={SITE.links.home}>noeta.dev</a>
+          <a href={SITE.links.docs}>docs</a>
+          <a href={SITE.links.registry}>registry</a>
+          <a href={SITE.links.github}>github</a>
+        </nav>
+        <p class="foot-meta">
+          Everything here runs in your tab — the real Noeta toolchain compiled to WebAssembly.
+          Nothing you type leaves the browser (share links live in the URL fragment).
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+---
+/* Document <head>: SEO meta, OpenGraph/Twitter cards, and Schema.org JSON-LD.
+ * The playground is a WebApplication in the graph — an in-browser developer
+ * tool — with the WebSite node riding along. */
+import { SITE } from "../lib/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Page path for the canonical URL, e.g. "/". */
+  path?: string;
+}
+
+const { title = SITE.title, description = SITE.description, path = "/" } = Astro.props;
+const canonical = new URL(path, SITE.url).href.replace(/\/$/, "") || SITE.url;
+
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": "WebSite",
+    "@id": `${SITE.url}/#website`,
+    name: SITE.name,
+    url: SITE.url,
+    description: SITE.description,
+    about: { "@type": "SoftwareApplication", name: "Noeta", url: SITE.links.home },
+  },
+  {
+    "@type": "WebApplication",
+    "@id": `${SITE.url}/#app`,
+    name: SITE.name,
+    url: SITE.url,
+    description: SITE.description,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Any (runs in the browser)",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    author: { "@type": "Organization", name: "Noeta", url: SITE.links.home },
+  },
+];
+const jsonLdText = JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replaceAll(
+  "</",
+  "<\\/",
+);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="theme-color" content={SITE.themeColor} />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={SITE.ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={SITE.ogImage} />
+
+<script is:inline type="application/ld+json" set:html={jsonLdText} />

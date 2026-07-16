@@ -1,0 +1,471 @@
+/* play.noeta.dev — page-specific styles on top of @noeta/theme (tokens,
+ * chrome, .code-window, .btn*). Everything here is the workbench: toolbar,
+ * editor frame, output + debugger panels, and the Monaco decorations. */
+
+.playground {
+  padding: 2.25rem 0 4rem;
+}
+
+.bench-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.bench-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  letter-spacing: -0.01em;
+}
+
+.bench-sub {
+  margin: 0;
+  color: var(--paper-1);
+  font-size: 0.95rem;
+}
+
+.bench-sub kbd {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--ink-2);
+  color: var(--paper-0);
+}
+
+/* --- Toolbar --- */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.9rem;
+}
+
+.toolbar .btn {
+  cursor: pointer;
+}
+
+/* The theme's .btn display would otherwise beat the UA [hidden] rule. */
+.playground [hidden] {
+  display: none !important;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--paper-1);
+  cursor: pointer;
+  user-select: none;
+  padding: 0.3rem 0.4rem;
+}
+
+.toggle input {
+  accent-color: var(--signal);
+}
+
+.examples {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--paper-0);
+  background: var(--ink-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  padding: 0.42rem 0.6rem;
+  cursor: pointer;
+}
+
+.examples:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 1px;
+}
+
+.status {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--paper-2);
+}
+
+.status[data-tone="ok"] {
+  color: var(--syn-string);
+}
+
+.status[data-tone="err"] {
+  color: var(--syn-number);
+}
+
+/* --- Workbench layout --- */
+
+.bench {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.editor-pane {
+  /* .code-window supplies the frame; the editor fills it. */
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-host {
+  height: min(68vh, 44rem);
+  min-height: 22rem;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.panel {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--ink-1);
+  overflow: hidden;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--ink-2);
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--paper-1);
+}
+
+/* --- Output --- */
+
+.stdout,
+.trace {
+  margin: 0;
+  padding: 0.85rem 0.95rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 3.2rem;
+  max-height: 18rem;
+  overflow: auto;
+}
+
+.stdout:empty::before {
+  content: "— run the program to see its output —";
+  color: var(--paper-2);
+  font-style: italic;
+}
+
+.trace {
+  color: var(--syn-number);
+  border-top: 1px dashed var(--line);
+}
+
+.exit-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.exit-badge[data-tone="ok"] {
+  color: var(--syn-string);
+}
+
+.exit-badge[data-tone="err"] {
+  color: var(--syn-number);
+}
+
+.diagnostics {
+  display: flex;
+  flex-direction: column;
+}
+
+.diagnostics:not(:empty) {
+  border-top: 1px solid var(--line);
+  max-height: 14rem;
+  overflow: auto;
+}
+
+.diag {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.95rem;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--paper-0);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.diag:hover {
+  background: var(--ink-2);
+}
+
+.diag-loc {
+  color: var(--paper-2);
+}
+
+.diag-code {
+  color: var(--syn-number);
+}
+
+.diag-error .diag-code {
+  color: var(--syn-number);
+}
+
+.diag-warning .diag-code {
+  color: var(--syn-type);
+}
+
+.diag-msg {
+  flex: 1 1 12rem;
+}
+
+.diag-help {
+  flex-basis: 100%;
+  color: var(--paper-2);
+  font-style: italic;
+}
+
+/* --- Debugger --- */
+
+.step-controls {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.step-btn {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1;
+  width: 1.9rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--ink-1);
+  color: var(--signal);
+  cursor: pointer;
+}
+
+.step-btn:hover:not(:disabled) {
+  border-color: var(--signal);
+  background: var(--signal-dim);
+}
+
+.step-btn:disabled {
+  color: var(--paper-2);
+  opacity: 0.45;
+  cursor: default;
+}
+
+.debug-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+}
+
+.stack-pane,
+.vars-pane {
+  min-width: 0;
+  padding: 0.6rem 0.75rem 0.8rem;
+}
+
+.stack-pane {
+  border-right: 1px solid var(--line);
+}
+
+.stack-pane h3,
+.vars-pane h3 {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--paper-2);
+}
+
+.stack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 11rem;
+  overflow: auto;
+}
+
+.frame {
+  display: flex;
+  align-items: baseline;
+  gap: 0.15rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.28rem 0.45rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--paper-0);
+  cursor: pointer;
+}
+
+.frame:hover {
+  background: var(--ink-2);
+}
+
+.frame[data-active="true"] {
+  background: var(--signal-dim);
+  color: var(--signal-bright);
+}
+
+.frame-loc {
+  color: var(--paper-2);
+}
+
+.vars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-height: 11rem;
+  overflow: auto;
+}
+
+.var {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.18rem 0.45rem;
+  border-radius: 6px;
+}
+
+.var:nth-child(odd) {
+  background: color-mix(in srgb, var(--ink-2) 55%, transparent);
+}
+
+.var-name {
+  color: var(--syn-fn);
+}
+
+.var-value {
+  flex: 1;
+  color: var(--paper-0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.var-type {
+  color: var(--syn-type);
+  font-size: 0.72rem;
+}
+
+.vars-empty {
+  margin: 0;
+  padding: 0.2rem 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-style: italic;
+  color: var(--paper-2);
+}
+
+/* --- Monaco decorations: breakpoints + the paused line --- */
+
+.bp-glyph {
+  cursor: pointer;
+}
+
+.bp-glyph::after {
+  content: "";
+  display: block;
+  width: 0.62em;
+  height: 0.62em;
+  margin: 30% auto 0;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 8px rgba(230, 159, 55, 0.55);
+}
+
+.paused-line {
+  background: rgba(230, 159, 55, 0.1);
+  outline: 1px solid rgba(230, 159, 55, 0.28);
+}
+
+.paused-glyph::after {
+  content: "▶";
+  display: block;
+  text-align: center;
+  color: var(--signal-bright);
+  font-size: 0.72em;
+  line-height: 1.6;
+}
+
+/* --- 404 --- */
+
+.notfound {
+  padding: 6rem 0 8rem;
+  max-width: 38rem;
+}
+
+.notfound h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2.4rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.notfound a {
+  color: var(--signal);
+}
+
+/* --- Responsive --- */
+
+@media (max-width: 60rem) {
+  .bench {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-host {
+    height: 55vh;
+    min-height: 18rem;
+  }
+
+  .status {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

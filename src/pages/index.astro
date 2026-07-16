@@ -1,0 +1,81 @@
+---
+/* The playground. One page: toolbar, Monaco editor in a code-window frame,
+ * output + debug side panel. All behavior lives in src/lib/playground.ts. */
+import Base from "../layouts/Base.astro";
+---
+
+<Base path="/">
+  <main class="playground">
+    <div class="wrap">
+      <div class="bench-head">
+        <h1 class="bench-title">Playground</h1>
+        <p class="bench-sub">
+          The real toolchain, client-side: live diagnostics, hover types, completion — and a
+          debugger. <kbd>Ctrl</kbd>+<kbd>Enter</kbd> runs.
+        </p>
+      </div>
+
+      <div class="toolbar" role="toolbar" aria-label="Playground actions">
+        <button id="run" class="btn btn-primary" type="button">Run ▸</button>
+        <button id="debug" class="btn" type="button">Debug ⏸</button>
+        <button id="stop" class="btn btn-ghost" type="button" hidden>Stop ■</button>
+        <button id="fmt" class="btn btn-ghost" type="button">Format</button>
+        <button id="share" class="btn btn-ghost" type="button">Share</button>
+        <label class="toggle" title="Run with real entropy, wall clock, and outbound HTTP (requests leave your browser, subject to CORS). Off = the deterministic sandbox.">
+          <input type="checkbox" id="realhost" />
+          real host
+        </label>
+        <select id="examples" class="examples" aria-label="Example programs"></select>
+        <span id="status" class="status" role="status">loading engine…</span>
+      </div>
+
+      <div class="bench">
+        <section class="editor-pane code-window" aria-label="Editor">
+          <div class="bar">
+            <span class="dot lit"></span><span class="dot"></span><span class="dot"></span>
+            <span class="file">playground.noe</span>
+          </div>
+          <div id="editor" class="editor-host"></div>
+        </section>
+
+        <aside class="side">
+          <section id="debug-panel" class="panel debug-panel" hidden aria-label="Debugger">
+            <div class="panel-head">
+              <h2>Debugger</h2>
+              <div class="step-controls">
+                <button id="step-continue" class="step-btn" type="button" disabled title="Continue (to the next breakpoint)">▶</button>
+                <button id="step-over" class="step-btn" type="button" disabled title="Step over">⤵</button>
+                <button id="step-in" class="step-btn" type="button" disabled title="Step in">⇣</button>
+                <button id="step-out" class="step-btn" type="button" disabled title="Step out">⇡</button>
+              </div>
+            </div>
+            <div class="debug-grid">
+              <div class="stack-pane">
+                <h3>Call stack</h3>
+                <ol id="stack" class="stack"></ol>
+              </div>
+              <div class="vars-pane">
+                <h3>Variables</h3>
+                <div id="vars" class="vars"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel output-panel" aria-label="Program output">
+            <div class="panel-head">
+              <h2>Output</h2>
+              <span id="exit" class="exit-badge"></span>
+            </div>
+            <pre id="stdout" class="stdout"></pre>
+            <pre id="trace" class="trace" hidden></pre>
+            <div id="diagnostics" class="diagnostics"></div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </main>
+</Base>
+
+<script>
+  import "../lib/playground";
+</script>

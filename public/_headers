@@ -1,0 +1,8 @@
+# Cross-origin isolation for the whole site: SharedArrayBuffer — which the
+# debugger's pause protocol (Atomics.wait in the engine worker) requires — is
+# only available on crossOriginIsolated pages. Every asset here is same-origin,
+# so require-corp costs nothing; outbound fetch/XHR from playground programs
+# still works (CORS applies as it always did).
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp

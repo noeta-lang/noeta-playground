@@ -1,0 +1,192 @@
+---
+/* Screenshot target for the 1200×630 social-share card. Rendered at build time
+ * only — scripts/build-og-image.mjs serves dist/, screenshots /og into
+ * dist/images/og-image.png, then deletes dist/og/ so it never ships. */
+import "@noeta/theme/fonts.css";
+import "@noeta/theme/theme.css";
+import { highlightNoeta } from "@noeta/theme/highlight";
+
+const SNIPPET = `fn fib(n: int): int {
+  if n < 2 { return n; }
+  return fib(n - 1) + fib(n - 2);
+}
+
+echo "fib(16) = \${fib(16)}"`;
+const code = highlightNoeta(SNIPPET);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>og image — noeta playground</title>
+    <style>
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        margin: 0;
+        overflow: hidden;
+      }
+      .og-canvas {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        display: flex;
+        flex-direction: column;
+        padding: 56px 64px 48px;
+        background:
+          radial-gradient(75rem 40rem at 82% -20%, rgba(230, 159, 55, 0.13), transparent 62%),
+          radial-gradient(55rem 32rem at -10% 115%, rgba(127, 187, 179, 0.07), transparent 60%),
+          var(--ink-0);
+      }
+      .og-canvas::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: radial-gradient(80rem 45rem at 75% -10%, rgba(0, 0, 0, 0.5), transparent 72%);
+      }
+      .og-mast {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-family: var(--font-mono);
+        font-size: 17px;
+        color: var(--paper-2);
+        letter-spacing: 0.1em;
+      }
+      .og-mast .brand {
+        font-family: var(--font-display);
+        font-size: 30px;
+        letter-spacing: 0.01em;
+        color: var(--paper-0);
+      }
+      .og-mast .brand .tld {
+        color: var(--paper-2);
+        font-style: italic;
+      }
+      .og-main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 560px 1fr;
+        gap: 44px;
+        align-items: center;
+      }
+      .og-headline {
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: 400;
+        font-size: 80px;
+        line-height: 1.02;
+        letter-spacing: -0.012em;
+        color: var(--paper-0);
+      }
+      .og-headline .accent {
+        font-style: italic;
+        color: var(--signal);
+      }
+      .og-dek {
+        margin: 26px 0 0;
+        font-family: var(--font-body);
+        font-size: 24px;
+        line-height: 1.5;
+        color: var(--paper-1);
+        max-width: 540px;
+      }
+      .og-code {
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        background: var(--ink-1);
+        overflow: hidden;
+        box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.85);
+      }
+      .og-code .bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--ink-2);
+        font-family: var(--font-mono);
+        font-size: 14px;
+        color: var(--paper-1);
+      }
+      .og-code .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--ink-3);
+        border: 1px solid var(--line-strong);
+      }
+      .og-code .dot.lit {
+        background: var(--signal);
+        border-color: var(--signal);
+        box-shadow: 0 0 12px rgba(230, 159, 55, 0.6);
+      }
+      .og-code .bp {
+        display: inline-block;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--signal);
+        box-shadow: 0 0 10px rgba(230, 159, 55, 0.7);
+        margin-right: 10px;
+      }
+      .og-code pre {
+        margin: 0;
+        padding: 20px 22px;
+        font-family: var(--font-mono);
+        font-size: 15px;
+        line-height: 1.72;
+        color: var(--paper-0);
+      }
+      .og-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-family: var(--font-mono);
+        font-size: 18px;
+        color: var(--signal);
+      }
+      .og-foot .quiet {
+        color: var(--paper-2);
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="og-canvas">
+      <header class="og-mast">
+        <span class="brand">noeta<span class="tld">.dev/play</span></span>
+        <span>PLAYGROUND</span>
+      </header>
+      <main class="og-main">
+        <div>
+          <h1 class="og-headline">Run it <span class="accent">right here.</span></h1>
+          <p class="og-dek">
+            The real Noeta toolchain in your browser — diagnostics, hover types, completion, and a
+            debugger with breakpoints. No backend, nothing leaves the tab.
+          </p>
+        </div>
+        <div class="og-code">
+          <div class="bar">
+            <span class="dot lit"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span>playground.noe</span>
+          </div>
+          <pre><code set:html={code} /></pre>
+        </div>
+      </main>
+      <footer class="og-foot">
+        <span>play.noeta.dev</span>
+        <span class="quiet">run · debug · format · share</span>
+      </footer>
+    </div>
+  </body>
+</html>

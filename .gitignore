@@ -1,6 +1,8 @@
 node_modules/
 .wrangler/
 dist/
+.astro/
+public/engine/
 *.log
 .dev.vars
 .DS_Store
