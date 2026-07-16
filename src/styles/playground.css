@@ -351,8 +351,22 @@
   color: var(--signal-bright);
 }
 
+.frame-name {
+  flex: 0 0 auto;
+}
+
+.frame-args {
+  color: var(--syn-string);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .frame-loc {
   color: var(--paper-2);
+  margin-left: auto;
+  padding-left: 0.4rem;
 }
 
 .vars {
@@ -496,16 +510,24 @@
 
 /* --- Monaco decorations: breakpoints + the paused line --- */
 
+/* Monaco sizes the glyph-margin element to the exact line box, so flex-center
+ * the marker inside it — no line-height / margin guesswork that drifts with the
+ * editor's font size. */
+.bp-glyph,
+.paused-glyph {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
 .bp-glyph {
   cursor: pointer;
 }
 
 .bp-glyph::after {
   content: "";
-  display: block;
-  width: 0.62em;
-  height: 0.62em;
-  margin: 30% auto 0;
+  width: 0.6em;
+  height: 0.6em;
   border-radius: 50%;
   background: var(--signal);
   box-shadow: 0 0 8px rgba(230, 159, 55, 0.55);
@@ -518,11 +540,9 @@
 
 .paused-glyph::after {
   content: "▶";
-  display: block;
-  text-align: center;
   color: var(--signal-bright);
-  font-size: 0.72em;
-  line-height: 1.6;
+  font-size: 0.7em;
+  line-height: 1;
 }
 
 /* --- 404 --- */

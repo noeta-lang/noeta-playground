@@ -254,10 +254,16 @@ function renderPaused(state: PausedState, preserveSelection = false) {
     const name = document.createElement("span");
     name.className = "frame-name";
     name.textContent = frame.name;
+    // The frame's in-scope values, inline — so recursive frames read as
+    // `fib(n=8)`, `fib(n=7)`, … rather than an unreadable stack of identical
+    // `fib:7` rows. Clicking the frame still shows the full Variables panel.
+    const args = document.createElement("span");
+    args.className = "frame-args";
+    args.textContent = frameSummary(frame.locals);
     const where = document.createElement("span");
     where.className = "frame-loc";
     where.textContent = frame.line > 0 ? `:${frame.line}` : "";
-    button.append(name, where);
+    button.append(name, args, where);
     button.addEventListener("click", () => {
       selectedFrame = index;
       stackList.querySelectorAll(".frame").forEach((el) => delete (el as HTMLElement).dataset.active);
@@ -285,6 +291,27 @@ function renderPaused(state: PausedState, preserveSelection = false) {
     ]);
     editor.revealLineInCenter(line);
   }
+}
+
+/** A compact `(name=value, …)` summary of a frame's in-scope values for the call-stack row,
+ * length-capped so a deep frame stays one tidy line. Empty when the frame has no locals. */
+function frameSummary(locals: { name: string; value: string }[]): string {
+  // Skip locals still awaiting their first assignment (a paused-before value renders empty) —
+  // they carry no information in the one-line summary. The Variables panel still lists them.
+  const assigned = locals.filter((local) => local.value !== "");
+  if (assigned.length === 0) return "";
+  const parts: string[] = [];
+  let width = 0;
+  for (const local of assigned) {
+    const part = `${local.name}=${local.value}`;
+    if (width + part.length > 28 && parts.length > 0) {
+      parts.push("…");
+      break;
+    }
+    parts.push(part);
+    width += part.length + 2;
+  }
+  return `(${parts.join(", ")})`;
 }
 
 function renderLocals(locals: { name: string; value: string; ty: string }[]) {

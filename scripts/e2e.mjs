@@ -111,6 +111,10 @@ assert.equal(await page.textContent("#status"), "paused: breakpoint");
 // The stack shows sum → main; the variables show total and v.
 const frames = await page.$$eval("#stack .frame-name", (els) => els.map((e) => e.textContent));
 assert.deepEqual(frames, ["sum", "main"]);
+// Each stack row surfaces its in-scope values inline (so recursion is legible, not a wall of
+// identical rows). The paused `sum` frame shows its arguments; unassigned locals are omitted.
+const sumArgs = await page.$eval("#stack li:first-child .frame-args", (e) => e.textContent);
+assert.match(sumArgs, /values=\[3, 7, 11\]/, `sum frame args: ${sumArgs}`);
 let vars = await page.$$eval("#vars .var", (els) =>
   els.map((e) => `${e.querySelector(".var-name").textContent}=${e.querySelector(".var-value").textContent}:${e.querySelector(".var-type").textContent}`),
 );
