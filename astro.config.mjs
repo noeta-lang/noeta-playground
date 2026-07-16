@@ -6,12 +6,30 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 
 // The COOP/COEP pair that makes the page crossOriginIsolated. Production gets
-// it from public/_headers (Cloudflare static assets); the dev server needs it
-// here — without it SharedArrayBuffer is undefined and the debugger's
-// Atomics.wait pause protocol cannot run.
+// it from public/_headers (Cloudflare static assets); dev and preview need it
+// applied to every response — without it SharedArrayBuffer is undefined and the
+// debugger's Atomics.wait pause protocol cannot run.
 const isolationHeaders = {
   "Cross-Origin-Opener-Policy": "same-origin",
   "Cross-Origin-Embedder-Policy": "require-corp",
+};
+
+// Astro's dev server does NOT propagate `vite.server.headers` to page responses
+// (only to Vite's own asset handlers), so the HTML document loads without
+// COOP/COEP and the tab is not crossOriginIsolated. This tiny integration
+// installs a Connect middleware on the dev server that stamps the pair on every
+// response — the reliable way to isolate the dev tab. Production is unaffected
+// (static build; Cloudflare serves public/_headers).
+const crossOriginIsolation = {
+  name: "cross-origin-isolation",
+  hooks: {
+    "astro:server:setup": ({ server }) => {
+      server.middlewares.use((_req, res, next) => {
+        for (const [name, value] of Object.entries(isolationHeaders)) res.setHeader(name, value);
+        next();
+      });
+    },
+  },
 };
 
 export default defineConfig({
@@ -19,6 +37,7 @@ export default defineConfig({
   output: "static",
   build: { format: "directory" },
   integrations: [
+    crossOriginIsolation,
     sitemap({
       // /og is the OG-image screenshot target (deleted post-build); never index it.
       filter: (page) => !/\/og\/?$/.test(page),
@@ -30,7 +49,7 @@ export default defineConfig({
     }),
   ],
   vite: {
-    server: { headers: isolationHeaders },
+    // `astro preview` runs Vite's preview server, which DOES honor this.
     preview: { headers: isolationHeaders },
     // monaco-editor ships ESM with worker entry points; keep them as ES modules.
     worker: { format: "es" },

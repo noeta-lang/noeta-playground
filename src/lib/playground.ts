@@ -452,8 +452,10 @@ examplePicker.addEventListener("change", () => {
   setStatus("ready");
 });
 
+// Debugging needs cross-origin isolation (SharedArrayBuffer). Rather than silently disable the
+// button — which reads as "nothing happens" — leave it clickable so `doDebug`'s own guard can
+// explain why in the status line.
 if (!crossOriginIsolated) {
-  debugButton.disabled = true;
   debugButton.title = "Debugging needs cross-origin isolation (COOP/COEP headers)";
 }
 

@@ -1,6 +1,7 @@
 /* Curated example programs. `welcome` is the page's starting buffer: small
  * enough to read at a glance, rich enough that Run, hover, and the debugger
- * all have something to show. */
+ * all have something to show. Statement terminators are newlines — the default
+ * Noeta style, matching `noeta fmt` (the Format button). */
 
 export const EXAMPLES: Record<string, string> = {
   welcome: `// Welcome to the Noeta playground — the real toolchain, running in
@@ -8,40 +9,40 @@ export const EXAMPLES: Record<string, string> = {
 // click the gutter to set a breakpoint and hit Debug.
 
 fn fib(n: int): int {
-  if n < 2 { return n; }
-  a = fib(n - 1);
-  b = fib(n - 2);
-  return a + b;
+  if n < 2 { return n }
+  a = fib(n - 1)
+  b = fib(n - 2)
+  return a + b
 }
 
 for n in [8, 12, 16] {
-  value = fib(n);
-  echo "fib(\${n}) = \${value}";
+  value = fib(n)
+  echo "fib(\${n}) = \${value}"
 }
 `,
   "seeded random": `// The playground runs the deterministic sandbox: the same seed
 // always produces the same stream — run it twice and see.
-use std.random;
+use std.random
 
-random.seed(42);
+random.seed(42)
 for i in [1, 2, 3] {
-  echo random.int(0, 100);
+  echo random.int(0, 100)
 }
 `,
   "stack trace": `fn inner(): int {
-  panic("something went wrong");
+  panic("something went wrong")
 }
 
 fn outer(): int {
-  return inner();
+  return inner()
 }
 
-echo outer();
+echo outer()
 `,
   "type error": `// The checker runs as you type: \`mut\` is stably typed, so this
 // reassignment is flagged before you ever hit Run.
-mut count = 1;
-count = "not a number";
+mut count = 1
+count = "not a number"
 `,
   "http fetch": `// Tick "real host" in the toolbar: the request leaves your browser
 // (subject to CORS). In the default sandbox the same code gets the
@@ -59,15 +60,15 @@ echo r.body()
 // a call like \`sum([100])\`).
 
 fn sum(values: List<int>): int {
-  mut total = 0;
+  mut total = 0
   for v in values {
-    total = total + v;
+    total = total + v
   }
-  return total;
+  return total
 }
 
-result = sum([3, 7, 11]);
-echo "sum = \${result}";
+result = sum([3, 7, 11])
+echo "sum = \${result}"
 `,
 };
 
