@@ -217,6 +217,7 @@ let busy = false;
 
 async function doRun() {
   if (busy) return;
+  stopDebugging(); // a parked debug session would otherwise wedge the run worker
   busy = true;
   clearOutput();
   setStatus(realHostToggle.checked ? "running (real host)…" : "running…");
@@ -254,6 +255,9 @@ async function doShare() {
 const pausedDecoration = editor.createDecorationsCollection([]);
 let resumeCurrent: ((command: DebugCommand) => void) | null = null;
 let debugging = false;
+// Bumped whenever a session ends or is superseded; a session's own callbacks and teardown check
+// their generation so a torn-down session can never clobber the UI of whatever replaced it.
+let debugGen = 0;
 /** The stack frame the Variables panel and console evals target (innermost-first index). */
 let selectedFrame = 0;
 
@@ -399,6 +403,7 @@ function leavePause() {
 function endDebugSession() {
   debugging = false;
   resumeCurrent = null;
+  debugGen++;
   pausedDecoration.set([]);
   pausedGlyphLine = 0;
   refreshBreakpointGlyphs();
@@ -407,12 +412,23 @@ function endDebugSession() {
   editor.updateOptions({ readOnly: false });
 }
 
+/** Tear down any active debug session and free the parked run worker, so a fresh run/debug (or an
+ * example switch) isn't wedged behind it. Paused or between pauses, restarting the runner is the
+ * uniform lever; the superseded session's `debug` promise then settles as a no-op (its generation
+ * is stale). No-op when not debugging. */
+function stopDebugging() {
+  if (!debugging) return;
+  engine.stopRunner();
+  endDebugSession();
+}
+
 async function doDebug() {
   if (busy || debugging) return;
   if (!crossOriginIsolated) {
     setStatus("debugging needs cross-origin isolation — this page isn't serving COOP/COEP", "err");
     return;
   }
+  const gen = ++debugGen;
   debugging = true;
   clearOutput();
   editor.updateOptions({ readOnly: true }); // the paused view must match the compiled program
@@ -426,6 +442,7 @@ async function doDebug() {
   setStatus(lines.length > 0 ? "debugging…" : "debugging (no breakpoints — will run through)…");
   try {
     const result = await engine.debug(model.getValue(), lines, (state, resume) => {
+      if (gen !== debugGen) return; // a superseded session — ignore its stray pauses
       resumeCurrent = resume;
       // A payload with an eval outcome is the same pause continuing (the console answered);
       // keep the user's frame selection then, reset to the innermost on a fresh stop.
@@ -438,11 +455,11 @@ async function doDebug() {
       if (state.eval) consoleInput.focus();
       setStatus(`paused: ${state.reason}`, "");
     });
-    renderRunResult(result);
+    if (gen === debugGen) renderRunResult(result);
   } catch (error) {
-    setStatus(String((error as Error).message ?? error), "err");
+    if (gen === debugGen) setStatus(String((error as Error).message ?? error), "err");
   } finally {
-    endDebugSession();
+    if (gen === debugGen) endDebugSession();
   }
 }
 
@@ -501,6 +518,7 @@ for (const name of Object.keys(EXAMPLES)) {
 }
 examplePicker.value = DEFAULT_EXAMPLE;
 examplePicker.addEventListener("change", () => {
+  stopDebugging(); // end any live session before swapping the program out from under it
   model.setValue(EXAMPLES[examplePicker.value] ?? "");
   breakpoints.set([]);
   clearOutput();
