@@ -3,6 +3,7 @@
  * The playground is a WebApplication in the graph — an in-browser developer
  * tool — with the WebSite node riding along. */
 import { SITE } from "../lib/site";
+import faviconUrl from "@noeta/theme/favicon.svg?url";
 
 interface Props {
   title?: string;
@@ -48,7 +49,7 @@ const jsonLdText = JSON.stringify({ "@context": "https://schema.org", "@graph": 
 <link rel="canonical" href={canonical} />
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content={SITE.themeColor} />
 <meta name="theme-color" media="(prefers-color-scheme: light)" content={SITE.themeColorLight} />
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href={faviconUrl} type="image/svg+xml" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 
 <meta property="og:type" content="website" />
