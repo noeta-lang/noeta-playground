@@ -2,13 +2,27 @@
 /* The playground. One page: toolbar, Monaco editor in a code-window frame,
  * output + debug side panel. All behavior lives in src/lib/playground.ts. */
 import Base from "../layouts/Base.astro";
+import { SITE } from "../lib/site";
 ---
 
 <Base path="/">
   <main class="playground">
     <div class="wrap">
       <div class="bench-head">
-        <h1 class="bench-title">Playground</h1>
+        <div class="bench-title-row">
+          <h1 class="bench-title">Playground</h1>
+          {
+            SITE.version && (
+              <a
+                class="version-pill"
+                href={`${SITE.links.github}/releases/tag/${SITE.version}`}
+                title={`Noeta ${SITE.version}`}
+              >
+                {SITE.version}
+              </a>
+            )
+          }
+        </div>
         <p class="bench-sub">
           The real toolchain, client-side: live diagnostics, hover types, completion — and a
           debugger. <kbd>Ctrl</kbd>+<kbd>Enter</kbd> runs.

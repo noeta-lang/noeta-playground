@@ -13,6 +13,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # A Noeta release dispatches `release-published` with `{ tag }`; the engine + version pill follow it.
+  repository_dispatch:
+    types: [release-published]
 
 concurrency:
   group: deploy
@@ -28,6 +31,28 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Resolve latest Noeta release tag
+        # NOETA_VERSION is baked into the built HTML via SITE.version (the header's version pill), and
+        # it is also the ref the engine is built from below — so the playground runs the *released*
+        # engine, not unreleased work on main. A release dispatch carries the tag; push / manual runs
+        # fall back to /releases/latest (empty → checkout's default branch). GITHUB_TOKEN lifts the
+        # unauthenticated rate limit (60 → 5000 req/h).
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAYLOAD_TAG: ${{ github.event.client_payload.tag }}
+        run: |
+          if [ -n "$PAYLOAD_TAG" ]; then
+            TAG="$PAYLOAD_TAG"
+          else
+            TAG=$(curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/noeta-lang/noeta/releases/latest \
+              | jq -r '.tag_name // empty' || true)
+          fi
+          [ -n "$TAG" ] && echo "NOETA_VERSION=$TAG" >> "$GITHUB_ENV"
+          echo "Building against ${TAG:-main}."
+
       - name: Checkout site
         uses: actions/checkout@v6
         with:
@@ -43,6 +68,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: noeta-lang/noeta
+          # The released tag (or the default branch when NOETA_VERSION is unset — no release yet).
+          ref: ${{ env.NOETA_VERSION }}
           path: lang
 
       - name: Set up Rust (wasm32-unknown-unknown)
