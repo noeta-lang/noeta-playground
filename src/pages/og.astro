@@ -1,7 +1,10 @@
 ---
 /* Screenshot target for the 1200×630 social-share card. Rendered at build time
  * only — scripts/build-og-image.mjs serves dist/, screenshots /og into
- * dist/images/og-image.png, then deletes dist/og/ so it never ships. */
+ * dist/images/og-image.png, then deletes dist/og/ so it never ships. The card
+ * is always the dark "Signal" palette — the token block below re-pins the dark
+ * values so it renders the same regardless of the screenshot browser's
+ * color-scheme. */
 import "@noeta/theme/fonts.css";
 import "@noeta/theme/theme.css";
 import { highlightNoeta } from "@noeta/theme/highlight";
@@ -22,6 +25,29 @@ const code = highlightNoeta(SNIPPET);
     <meta name="robots" content="noindex,nofollow" />
     <title>og image — noeta playground</title>
     <style>
+      :root {
+        --bg: #0b0d10;
+        --surface-1: #111419;
+        --surface-2: #171b21;
+        --surface-3: #1f242c;
+        --text-0: #e8ebef;
+        --text-1: #a3adba;
+        --text-2: #69727e;
+        --accent: #4f8ff7;
+        --accent-2: #4fe0a8;
+        --accent-2-bright: #7defc0;
+        --danger: #e5766a;
+        --syn-keyword: #5fe0b0;
+        --syn-string: #8fd6a0;
+        --syn-number: #e0a878;
+        --syn-type: #8fb8f5;
+        --syn-fn: #cdd6e0;
+        --syn-tag: #5fe0b0;
+        --syn-comment: #69727e;
+        --syn-hole: #7defc0;
+        --line: rgba(233, 237, 243, 0.08);
+        --line-strong: rgba(233, 237, 243, 0.14);
+      }
       html,
       body {
         width: 1200px;
@@ -37,19 +63,9 @@ const code = highlightNoeta(SNIPPET);
         flex-direction: column;
         padding: 56px 64px 48px;
         background:
-          radial-gradient(75rem 40rem at 82% -20%, rgba(230, 159, 55, 0.13), transparent 62%),
-          radial-gradient(55rem 32rem at -10% 115%, rgba(127, 187, 179, 0.07), transparent 60%),
-          var(--ink-0);
-      }
-      .og-canvas::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image:
-          linear-gradient(var(--line) 1px, transparent 1px),
-          linear-gradient(90deg, var(--line) 1px, transparent 1px);
-        background-size: 72px 72px;
-        mask-image: radial-gradient(80rem 45rem at 75% -10%, rgba(0, 0, 0, 0.5), transparent 72%);
+          radial-gradient(70rem 40rem at 82% -20%, rgba(79, 143, 247, 0.14), transparent 62%),
+          radial-gradient(55rem 32rem at -10% 115%, rgba(79, 224, 168, 0.08), transparent 60%),
+          var(--bg);
       }
       .og-mast {
         display: flex;
@@ -57,18 +73,21 @@ const code = highlightNoeta(SNIPPET);
         align-items: baseline;
         font-family: var(--font-mono);
         font-size: 17px;
-        color: var(--paper-2);
-        letter-spacing: 0.1em;
+        color: var(--text-2);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
       }
       .og-mast .brand {
-        font-family: var(--font-display);
-        font-size: 30px;
-        letter-spacing: 0.01em;
-        color: var(--paper-0);
+        font-family: var(--font-body);
+        font-size: 28px;
+        font-weight: 620;
+        letter-spacing: -0.02em;
+        text-transform: none;
+        color: var(--text-0);
       }
       .og-mast .brand .tld {
-        color: var(--paper-2);
-        font-style: italic;
+        color: var(--text-2);
+        font-weight: 500;
       }
       .og-main {
         flex: 1;
@@ -79,29 +98,28 @@ const code = highlightNoeta(SNIPPET);
       }
       .og-headline {
         margin: 0;
-        font-family: var(--font-display);
-        font-weight: 400;
+        font-family: var(--font-body);
+        font-weight: 680;
         font-size: 80px;
         line-height: 1.02;
-        letter-spacing: -0.012em;
-        color: var(--paper-0);
+        letter-spacing: -0.038em;
+        color: var(--text-0);
       }
       .og-headline .accent {
-        font-style: italic;
-        color: var(--signal);
+        color: var(--accent);
       }
       .og-dek {
         margin: 26px 0 0;
         font-family: var(--font-body);
-        font-size: 24px;
+        font-size: 23px;
         line-height: 1.5;
-        color: var(--paper-1);
+        color: var(--text-1);
         max-width: 540px;
       }
       .og-code {
         border: 1px solid var(--line-strong);
         border-radius: 12px;
-        background: var(--ink-1);
+        background: var(--surface-1);
         overflow: hidden;
         box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.85);
       }
@@ -111,30 +129,30 @@ const code = highlightNoeta(SNIPPET);
         gap: 8px;
         padding: 12px 16px;
         border-bottom: 1px solid var(--line);
-        background: var(--ink-2);
+        background: var(--surface-2);
         font-family: var(--font-mono);
         font-size: 14px;
-        color: var(--paper-1);
+        color: var(--text-1);
       }
       .og-code .dot {
         width: 11px;
         height: 11px;
         border-radius: 50%;
-        background: var(--ink-3);
+        background: var(--surface-3);
         border: 1px solid var(--line-strong);
       }
       .og-code .dot.lit {
-        background: var(--signal);
-        border-color: var(--signal);
-        box-shadow: 0 0 12px rgba(230, 159, 55, 0.6);
+        background: var(--accent-2);
+        border-color: var(--accent-2);
+        box-shadow: 0 0 12px rgba(79, 224, 168, 0.6);
       }
       .og-code .bp {
         display: inline-block;
         width: 11px;
         height: 11px;
         border-radius: 50%;
-        background: var(--signal);
-        box-shadow: 0 0 10px rgba(230, 159, 55, 0.7);
+        background: var(--danger);
+        box-shadow: 0 0 10px rgba(229, 118, 106, 0.7);
         margin-right: 10px;
       }
       .og-code pre {
@@ -143,7 +161,7 @@ const code = highlightNoeta(SNIPPET);
         font-family: var(--font-mono);
         font-size: 15px;
         line-height: 1.72;
-        color: var(--paper-0);
+        color: var(--text-0);
       }
       .og-foot {
         display: flex;
@@ -151,10 +169,10 @@ const code = highlightNoeta(SNIPPET);
         align-items: baseline;
         font-family: var(--font-mono);
         font-size: 18px;
-        color: var(--signal);
+        color: var(--accent);
       }
       .og-foot .quiet {
-        color: var(--paper-2);
+        color: var(--accent-2-bright);
         font-size: 16px;
       }
     </style>
@@ -163,7 +181,7 @@ const code = highlightNoeta(SNIPPET);
     <div class="og-canvas">
       <header class="og-mast">
         <span class="brand">noeta<span class="tld">.dev/play</span></span>
-        <span>PLAYGROUND</span>
+        <span>Playground</span>
       </header>
       <main class="og-main">
         <div>

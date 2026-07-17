@@ -16,15 +16,15 @@
 
 .bench-title {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-weight: 640;
   font-size: clamp(2rem, 4vw, 2.6rem);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.028em;
 }
 
 .bench-sub {
   margin: 0;
-  color: var(--paper-1);
+  color: var(--text-1);
   font-size: 0.95rem;
 }
 
@@ -35,8 +35,8 @@
   border: 1px solid var(--line-strong);
   border-bottom-width: 2px;
   border-radius: 5px;
-  background: var(--ink-2);
-  color: var(--paper-0);
+  background: var(--surface-2);
+  color: var(--text-0);
 }
 
 /* --- Toolbar --- */
@@ -64,21 +64,21 @@
   gap: 0.4rem;
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: var(--paper-1);
+  color: var(--text-1);
   cursor: pointer;
   user-select: none;
   padding: 0.3rem 0.4rem;
 }
 
 .toggle input {
-  accent-color: var(--signal);
+  accent-color: var(--accent);
 }
 
 .examples {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: var(--paper-0);
-  background: var(--ink-2);
+  color: var(--text-0);
+  background: var(--surface-2);
   border: 1px solid var(--line-strong);
   border-radius: 7px;
   padding: 0.42rem 0.6rem;
@@ -86,7 +86,7 @@
 }
 
 .examples:focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
 
@@ -94,7 +94,7 @@
   margin-left: auto;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--paper-2);
+  color: var(--text-2);
 }
 
 .status[data-tone="ok"] {
@@ -102,7 +102,7 @@
 }
 
 .status[data-tone="err"] {
-  color: var(--syn-number);
+  color: var(--danger);
 }
 
 /* --- Workbench layout --- */
@@ -135,7 +135,7 @@
 .panel {
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
-  background: var(--ink-1);
+  background: var(--surface-1);
   overflow: hidden;
 }
 
@@ -146,7 +146,7 @@
   gap: 0.75rem;
   padding: 0.6rem 0.9rem;
   border-bottom: 1px solid var(--line);
-  background: var(--ink-2);
+  background: var(--surface-2);
 }
 
 .panel-head h2 {
@@ -156,7 +156,7 @@
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--paper-1);
+  color: var(--text-1);
 }
 
 /* --- Output --- */
@@ -177,12 +177,11 @@
 
 .stdout:empty::before {
   content: "— run the program to see its output —";
-  color: var(--paper-2);
-  font-style: italic;
+  color: var(--text-2);
 }
 
 .trace {
-  color: var(--syn-number);
+  color: var(--danger);
   border-top: 1px dashed var(--line);
 }
 
@@ -197,7 +196,7 @@
 }
 
 .exit-badge[data-tone="err"] {
-  color: var(--syn-number);
+  color: var(--danger);
 }
 
 .diagnostics {
@@ -222,7 +221,7 @@
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  color: var(--paper-0);
+  color: var(--text-0);
   font-family: var(--font-mono);
   font-size: 0.76rem;
   line-height: 1.5;
@@ -230,23 +229,23 @@
 }
 
 .diag:hover {
-  background: var(--ink-2);
+  background: var(--surface-2);
 }
 
 .diag-loc {
-  color: var(--paper-2);
+  color: var(--text-2);
 }
 
 .diag-code {
-  color: var(--syn-number);
+  color: var(--text-2);
 }
 
 .diag-error .diag-code {
-  color: var(--syn-number);
+  color: var(--danger);
 }
 
 .diag-warning .diag-code {
-  color: var(--syn-type);
+  color: var(--warning);
 }
 
 .diag-msg {
@@ -255,8 +254,7 @@
 
 .diag-help {
   flex-basis: 100%;
-  color: var(--paper-2);
-  font-style: italic;
+  color: var(--text-2);
 }
 
 /* --- Debugger --- */
@@ -276,18 +274,18 @@
   place-items: center;
   border: 1px solid var(--line-strong);
   border-radius: 6px;
-  background: var(--ink-1);
-  color: var(--signal);
+  background: var(--surface-1);
+  color: var(--accent);
   cursor: pointer;
 }
 
 .step-btn:hover:not(:disabled) {
-  border-color: var(--signal);
-  background: var(--signal-dim);
+  border-color: var(--accent);
+  background: var(--accent-dim);
 }
 
 .step-btn:disabled {
-  color: var(--paper-2);
+  color: var(--text-2);
   opacity: 0.45;
   cursor: default;
 }
@@ -315,7 +313,7 @@
   font-size: 0.66rem;
   text-transform: uppercase;
   letter-spacing: 0.13em;
-  color: var(--paper-2);
+  color: var(--text-2);
 }
 
 .stack {
@@ -338,17 +336,17 @@
   background: transparent;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--paper-0);
+  color: var(--text-0);
   cursor: pointer;
 }
 
 .frame:hover {
-  background: var(--ink-2);
+  background: var(--surface-2);
 }
 
 .frame[data-active="true"] {
-  background: var(--signal-dim);
-  color: var(--signal-bright);
+  background: var(--accent-dim);
+  color: var(--accent-bright);
 }
 
 .frame-name {
@@ -364,7 +362,7 @@
 }
 
 .frame-loc {
-  color: var(--paper-2);
+  color: var(--text-2);
   margin-left: auto;
   padding-left: 0.4rem;
 }
@@ -388,7 +386,7 @@
 }
 
 .var:nth-child(odd) {
-  background: color-mix(in srgb, var(--ink-2) 55%, transparent);
+  background: color-mix(in srgb, var(--surface-2) 55%, transparent);
 }
 
 .var-name {
@@ -397,7 +395,7 @@
 
 .var-value {
   flex: 1;
-  color: var(--paper-0);
+  color: var(--text-0);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -413,8 +411,7 @@
   padding: 0.2rem 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.74rem;
-  font-style: italic;
-  color: var(--paper-2);
+  color: var(--text-2);
 }
 
 /* --- Debug console --- */
@@ -431,7 +428,7 @@
   font-size: 0.66rem;
   text-transform: uppercase;
   letter-spacing: 0.13em;
-  color: var(--paper-2);
+  color: var(--text-2);
 }
 
 .console-log {
@@ -457,15 +454,15 @@
 }
 
 .console-prompt {
-  color: var(--signal);
+  color: var(--accent);
 }
 
 .console-echo .console-text {
-  color: var(--paper-1);
+  color: var(--text-1);
 }
 
 .console-input::placeholder {
-  color: var(--paper-2);
+  color: var(--text-2);
   opacity: 0.8;
 }
 
@@ -479,15 +476,15 @@
   width: 100%;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--paper-0);
-  background: var(--ink-2);
+  color: var(--text-0);
+  background: var(--surface-2);
   border: 1px solid var(--line-strong);
   border-radius: 7px;
   padding: 0.4rem 0.6rem;
 }
 
 .console-input:focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
 
@@ -500,7 +497,7 @@
 }
 
 .console-error .console-text {
-  color: var(--syn-number);
+  color: var(--danger);
 }
 
 .console-type {
@@ -529,18 +526,18 @@
   width: 0.6em;
   height: 0.6em;
   border-radius: 50%;
-  background: var(--signal);
-  box-shadow: 0 0 8px rgba(230, 159, 55, 0.55);
+  background: var(--danger);
+  box-shadow: 0 0 8px var(--danger-dim);
 }
 
 .paused-line {
-  background: rgba(230, 159, 55, 0.1);
-  outline: 1px solid rgba(230, 159, 55, 0.28);
+  background: var(--accent-dim);
+  outline: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
 .paused-glyph::after {
   content: "▶";
-  color: var(--signal-bright);
+  color: var(--accent-bright);
   font-size: 0.7em;
   line-height: 1;
 }
@@ -553,14 +550,15 @@
 }
 
 .notfound h1 {
-  font-family: var(--font-display);
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-weight: 640;
   font-size: 2.4rem;
+  letter-spacing: -0.028em;
   margin: 0.5rem 0 0.75rem;
 }
 
 .notfound a {
-  color: var(--signal);
+  color: var(--accent-bright);
 }
 
 /* --- Responsive --- */

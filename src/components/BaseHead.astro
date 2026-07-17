@@ -46,7 +46,8 @@ const jsonLdText = JSON.stringify({ "@context": "https://schema.org", "@graph": 
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<meta name="theme-color" content={SITE.themeColor} />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content={SITE.themeColor} />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content={SITE.themeColorLight} />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 

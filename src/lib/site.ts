@@ -10,7 +10,8 @@ export const SITE = {
     "completion, run it on the deterministic sandbox, format it, set breakpoints and step " +
     "through it — all in your browser, no backend.",
   ogImage: "https://play.noeta.dev/images/og-image.png",
-  themeColor: "#131110",
+  themeColor: "#0b0d10",
+  themeColorLight: "#f6f8fb",
   links: {
     home: "https://noeta.dev",
     docs: "https://docs.noeta.dev",

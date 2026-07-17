@@ -4,7 +4,14 @@
  * Loaded once from the index page. */
 
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
-import { monaco, registerNoeta, attachDiagnostics, LANGUAGE_ID } from "./monaco-noeta";
+import {
+  monaco,
+  registerNoeta,
+  attachDiagnostics,
+  LANGUAGE_ID,
+  editorThemeName,
+  watchEditorTheme,
+} from "./monaco-noeta";
 import { engine, type Diagnostic, type PausedState, type DebugCommand } from "./engine-client";
 import { EXAMPLES, DEFAULT_EXAMPLE } from "./examples";
 import { encodeShare, decodeShare } from "./share";
@@ -51,8 +58,8 @@ registerNoeta();
 const editor = monaco.editor.create($("editor"), {
   value: decodeShare(location.hash.slice(1)) ?? EXAMPLES[DEFAULT_EXAMPLE]!,
   language: LANGUAGE_ID,
-  theme: "ink-signal",
-  fontFamily: '"Spline Sans Mono Variable", "Spline Sans Mono", monospace',
+  theme: editorThemeName(),
+  fontFamily: '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace',
   fontSize: 13.5,
   lineHeight: 1.65,
   minimap: { enabled: false },
@@ -67,6 +74,8 @@ const editor = monaco.editor.create($("editor"), {
 });
 // The theme font loads async; remeasure once it lands so glyphs align.
 document.fonts.ready.then(() => monaco.editor.remeasureFonts());
+// Follow OS/browser light↔dark changes.
+watchEditorTheme();
 
 const model = editor.getModel()!;
 attachDiagnostics(model, renderDiagnostics);

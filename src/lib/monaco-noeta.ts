@@ -1,8 +1,9 @@
 /* Monaco ↔ Noeta: the language registration (Monarch tokenizer mirroring the
- * shared @noeta/theme highlighter), the "ink-signal" editor theme (the same
- * everforest-warm syntax palette as the rest of noeta.dev), and the language
- * providers — hover, completion, definition, signature help, formatting, and
- * live diagnostics — each a thin adapter over the wasm engine's IDE exports.
+ * shared @noeta/theme highlighter), the "signal-dark"/"signal-light" editor
+ * themes (the same cool syntax palette as the rest of noeta.dev, one per
+ * color-scheme), and the language providers — hover, completion, definition,
+ * signature help, formatting, and live diagnostics — each a thin adapter over
+ * the wasm engine's IDE exports.
  *
  * There is no language server process and no JSON-RPC: the engine IS
  * noeta-ide, the exact DocumentStore `noeta lsp` adapts over, compiled to
@@ -80,59 +81,126 @@ export function registerNoeta() {
     },
   });
 
-  // "Ink & Signal" for Monaco: ink surfaces, paper text, amber signal accent,
-  // the everforest-warm syntax palette — the tokens from @noeta/theme/theme.css.
-  monaco.editor.defineTheme("ink-signal", {
+  // "Signal" for Monaco, in both modes: slate surfaces, cool text, blue accent,
+  // mint keywords — the token palette from @noeta/theme/theme.css. The two
+  // themes mirror the site's light/dark tokens; applyEditorTheme() picks the one
+  // matching the OS/browser preference and follows changes live.
+  monaco.editor.defineTheme("signal-dark", {
     base: "vs-dark",
     inherit: true,
     rules: [
-      { token: "keyword", foreground: "e69f37" },
-      { token: "string", foreground: "a9c181" },
-      { token: "string.quote", foreground: "a9c181" },
-      { token: "string.escape", foreground: "ffc46b" },
-      { token: "string.hole", foreground: "ffc46b" },
-      { token: "number", foreground: "e6836a" },
-      { token: "type.identifier", foreground: "dbbc7f" },
-      { token: "function", foreground: "d3c6aa" },
-      { token: "comment", foreground: "837d6f", fontStyle: "italic" },
-      { token: "annotation", foreground: "ffc46b" },
-      { token: "identifier", foreground: "ece7da" },
-      { token: "operator", foreground: "b9b2a1" },
-      { token: "delimiter", foreground: "b9b2a1" },
+      { token: "keyword", foreground: "5fe0b0" },
+      { token: "string", foreground: "8fd6a0" },
+      { token: "string.quote", foreground: "8fd6a0" },
+      { token: "string.escape", foreground: "7defc0" },
+      { token: "string.hole", foreground: "7defc0" },
+      { token: "number", foreground: "e0a878" },
+      { token: "type.identifier", foreground: "8fb8f5" },
+      { token: "function", foreground: "cdd6e0" },
+      { token: "comment", foreground: "69727e", fontStyle: "italic" },
+      { token: "annotation", foreground: "7defc0" },
+      { token: "identifier", foreground: "e8ebef" },
+      { token: "operator", foreground: "a3adba" },
+      { token: "delimiter", foreground: "a3adba" },
     ],
     colors: {
-      "editor.background": "#191715",
-      "editor.foreground": "#ece7da",
-      "editorLineNumber.foreground": "#5c574d",
-      "editorLineNumber.activeForeground": "#b9b2a1",
-      "editorCursor.foreground": "#e69f37",
-      "editor.selectionBackground": "#e69f3730",
-      "editor.inactiveSelectionBackground": "#e69f3718",
-      "editor.lineHighlightBackground": "#211e1b",
-      "editorWhitespace.foreground": "#2b2723",
-      "editorIndentGuide.background1": "#2b2723",
-      "editorIndentGuide.activeBackground1": "#3d382f",
-      "editorBracketMatch.background": "#e69f3722",
-      "editorBracketMatch.border": "#e69f3766",
-      "editorWidget.background": "#211e1b",
-      "editorWidget.border": "#3d382f",
-      "editorSuggestWidget.background": "#211e1b",
-      "editorSuggestWidget.border": "#3d382f",
-      "editorSuggestWidget.selectedBackground": "#2b2723",
-      "editorHoverWidget.background": "#211e1b",
-      "editorHoverWidget.border": "#3d382f",
-      "editorError.foreground": "#e67e70",
-      "editorWarning.foreground": "#dbbc7f",
-      "scrollbarSlider.background": "#2b272380",
-      "scrollbarSlider.hoverBackground": "#3d382fa0",
-      "minimap.background": "#191715",
-      "input.background": "#211e1b",
-      "input.border": "#3d382f",
-      "focusBorder": "#e69f3766",
+      "editor.background": "#111419",
+      "editor.foreground": "#e8ebef",
+      "editorLineNumber.foreground": "#4a5260",
+      "editorLineNumber.activeForeground": "#a3adba",
+      "editorCursor.foreground": "#4f8ff7",
+      "editor.selectionBackground": "#4f8ff733",
+      "editor.inactiveSelectionBackground": "#4f8ff71f",
+      "editor.lineHighlightBackground": "#171b21",
+      "editorWhitespace.foreground": "#2b313a",
+      "editorIndentGuide.background1": "#232a33",
+      "editorIndentGuide.activeBackground1": "#38404b",
+      "editorBracketMatch.background": "#4f8ff722",
+      "editorBracketMatch.border": "#4f8ff766",
+      "editorWidget.background": "#171b21",
+      "editorWidget.border": "#2b313a",
+      "editorSuggestWidget.background": "#171b21",
+      "editorSuggestWidget.border": "#2b313a",
+      "editorSuggestWidget.selectedBackground": "#1f242c",
+      "editorHoverWidget.background": "#171b21",
+      "editorHoverWidget.border": "#2b313a",
+      "editorError.foreground": "#e5766a",
+      "editorWarning.foreground": "#e0a878",
+      "scrollbarSlider.background": "#2b313a80",
+      "scrollbarSlider.hoverBackground": "#38404ba0",
+      "minimap.background": "#111419",
+      "input.background": "#171b21",
+      "input.border": "#2b313a",
+      "focusBorder": "#4f8ff766",
+    },
+  });
+
+  monaco.editor.defineTheme("signal-light", {
+    base: "vs",
+    inherit: true,
+    rules: [
+      { token: "keyword", foreground: "0c8a66" },
+      { token: "string", foreground: "3f8f4f" },
+      { token: "string.quote", foreground: "3f8f4f" },
+      { token: "string.escape", foreground: "097053" },
+      { token: "string.hole", foreground: "097053" },
+      { token: "number", foreground: "b5651d" },
+      { token: "type.identifier", foreground: "2767d6" },
+      { token: "function", foreground: "384657" },
+      { token: "comment", foreground: "8a94a4", fontStyle: "italic" },
+      { token: "annotation", foreground: "097053" },
+      { token: "identifier", foreground: "14181f" },
+      { token: "operator", foreground: "47515f" },
+      { token: "delimiter", foreground: "47515f" },
+    ],
+    colors: {
+      "editor.background": "#ffffff",
+      "editor.foreground": "#14181f",
+      "editorLineNumber.foreground": "#b0b8c4",
+      "editorLineNumber.activeForeground": "#47515f",
+      "editorCursor.foreground": "#2767d6",
+      "editor.selectionBackground": "#2767d628",
+      "editor.inactiveSelectionBackground": "#2767d615",
+      "editor.lineHighlightBackground": "#eceff5",
+      "editorWhitespace.foreground": "#d7dce4",
+      "editorIndentGuide.background1": "#e4e8f0",
+      "editorIndentGuide.activeBackground1": "#c7cedb",
+      "editorBracketMatch.background": "#2767d61f",
+      "editorBracketMatch.border": "#2767d655",
+      "editorWidget.background": "#ffffff",
+      "editorWidget.border": "#e4e8f0",
+      "editorSuggestWidget.background": "#ffffff",
+      "editorSuggestWidget.border": "#e4e8f0",
+      "editorSuggestWidget.selectedBackground": "#eceff5",
+      "editorHoverWidget.background": "#ffffff",
+      "editorHoverWidget.border": "#e4e8f0",
+      "editorError.foreground": "#cf3b2f",
+      "editorWarning.foreground": "#b5651d",
+      "scrollbarSlider.background": "#14181f22",
+      "scrollbarSlider.hoverBackground": "#14181f33",
+      "minimap.background": "#ffffff",
+      "input.background": "#ffffff",
+      "input.border": "#e4e8f0",
+      "focusBorder": "#2767d655",
     },
   });
 
   registerProviders();
+}
+
+/** The editor theme matching the current OS/browser color-scheme. */
+export function editorThemeName(): "signal-dark" | "signal-light" {
+  const light =
+    typeof matchMedia !== "undefined" && matchMedia("(prefers-color-scheme: light)").matches;
+  return light ? "signal-light" : "signal-dark";
+}
+
+/** Follow OS/browser light↔dark changes, re-applying the matching editor theme. */
+export function watchEditorTheme(): void {
+  if (typeof matchMedia === "undefined") return;
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
+    monaco.editor.setTheme(editorThemeName());
+  });
 }
 
 /* --- Providers: thin adapters over the engine's IDE exports. Positions cross
