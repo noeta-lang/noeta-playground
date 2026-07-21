@@ -5,11 +5,11 @@
   // crossOriginIsolated — SharedArrayBuffer, which the debugger's pause
   // protocol parks on, requires it.
   //   pnpm run deploy
-  // To bind the custom domain, add a route once the zone is on Cloudflare:
-  //   "routes": [{ "pattern": "play.noeta.dev", "custom_domain": true }]
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "noeta-playground",
   "compatibility_date": "2025-07-01",
+  // Custom domain: wrangler manages the DNS record itself — do not add a CNAME by hand.
+  "routes": [{ "pattern": "play.noeta.dev", "custom_domain": true }],
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page"
