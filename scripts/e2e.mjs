@@ -82,6 +82,18 @@ assert.match(hoverText, /int/);
 console.log(`✓ hover shows a type (${JSON.stringify(hoverText.trim().slice(0, 40))})`);
 if (SHOTS) await page.screenshot({ path: `${SHOTS}/play-hover.png` });
 
+// 6b. Hover the callable NAME at its call site: the full signature, not just the return type.
+// This is the fidelity the engine composes and VS Code shows — the reason the hover was widened.
+await page.evaluate(() => {
+  const editor = window.__playground.editor;
+  editor.setPosition({ lineNumber: 5, column: 7 }); // on `add` in `echo add(1, 2);`
+  editor.trigger("e2e", "editor.action.showHover", {});
+});
+await page.waitForSelector(".monaco-hover:not(.hidden)", { timeout: 10000 });
+const sigHoverText = await page.textContent(".monaco-hover");
+assert.match(sigHoverText, /fn add\(/);
+console.log(`✓ hover shows a callable signature (${JSON.stringify(sigHoverText.trim().slice(0, 40))})`);
+
 // 7. Completion: suggest widget offers `add`.
 await page.evaluate(() => {
   const editor = window.__playground.editor;

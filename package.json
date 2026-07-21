@@ -13,7 +13,8 @@
     "build": "astro build && node scripts/build-og-image.mjs",
     "preview": "pnpm run build && wrangler dev",
     "deploy": "pnpm run build && wrangler deploy",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "test": "node --test 'src/lib/*.test.ts'"
   },
   "dependencies": {
     "@noeta/theme": "file:../noeta-theme",

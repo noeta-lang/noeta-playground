@@ -19,6 +19,13 @@
 import "monaco-editor/esm/vs/editor/editor.all.js";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import { engine, type Diagnostic } from "./engine-client";
+import {
+  bytePosition,
+  completionSuggestions,
+  definitionResult,
+  hoverResult,
+  signatureResult,
+} from "./providers";
 
 export const LANGUAGE_ID = "noeta";
 
@@ -207,20 +214,6 @@ export function watchEditorTheme(): void {
  * as zero-based (line, UTF-16 character) — the LSP convention the engine
  * speaks natively; Monaco is 1-based, so ±1 at the boundary. --- */
 
-type EngineRange = {
-  start: { line: number; character: number };
-  end: { line: number; character: number };
-};
-
-function toMonacoRange(range: EngineRange): monaco.IRange {
-  return {
-    startLineNumber: range.start.line + 1,
-    startColumn: range.start.character + 1,
-    endLineNumber: range.end.line + 1,
-    endColumn: range.end.character + 1,
-  };
-}
-
 const COMPLETION_KINDS: Record<string, monaco.languages.CompletionItemKind> = {
   keyword: monaco.languages.CompletionItemKind.Keyword,
   function: monaco.languages.CompletionItemKind.Function,
@@ -243,12 +236,7 @@ function registerProviders() {
         position.lineNumber - 1,
         position.column - 1,
       );
-      if (!reply.found) return null;
-      const note = reply.note ? `\n\n${reply.note}` : "";
-      return {
-        range: toMonacoRange(reply.range),
-        contents: [{ value: "```noeta\n" + reply.type + "\n```" + note }],
-      };
+      return hoverResult(reply);
     },
   });
 
@@ -268,14 +256,10 @@ function registerProviders() {
         endColumn: word.endColumn,
       };
       return {
-        suggestions: (reply.items ?? []).map(
-          (item: { label: string; kind: string; detail?: string }) => ({
-            label: item.label,
-            kind: COMPLETION_KINDS[item.kind] ?? monaco.languages.CompletionItemKind.Text,
-            detail: item.detail,
-            insertText: item.label,
-            range,
-          }),
+        suggestions: completionSuggestions(
+          reply.items,
+          range,
+          (kind) => COMPLETION_KINDS[kind] ?? monaco.languages.CompletionItemKind.Text,
         ),
       };
     },
@@ -288,8 +272,7 @@ function registerProviders() {
         position.lineNumber - 1,
         position.column - 1,
       );
-      if (!reply.found) return null;
-      return { uri: model.uri, range: toMonacoRange(reply.range) };
+      return definitionResult(reply, model.uri);
     },
   });
 
@@ -301,20 +284,7 @@ function registerProviders() {
         position.lineNumber - 1,
         position.column - 1,
       );
-      if (!reply.found) return null;
-      return {
-        value: {
-          signatures: [
-            {
-              label: reply.label,
-              parameters: (reply.parameters ?? []).map((p: string) => ({ label: p })),
-            },
-          ],
-          activeSignature: 0,
-          activeParameter: reply.active ?? 0,
-        },
-        dispose() {},
-      };
+      return signatureResult(reply);
     },
   });
 
@@ -329,25 +299,8 @@ function registerProviders() {
 
 /* --- Live diagnostics: `check` on every edit (debounced), surfaced as Monaco
  * markers. The engine's byte offsets are UTF-8; Monaco positions are UTF-16 —
- * mapped exactly rather than assumed equal, so non-ASCII sources square. --- */
-
-/** Map a UTF-8 byte offset into a Monaco (line, column), both 1-based. */
-function bytePosition(source: string, byteOffset: number): { lineNumber: number; column: number } {
-  let bytes = 0;
-  let line = 1;
-  let column = 1;
-  for (const ch of source) {
-    if (bytes >= byteOffset) break;
-    bytes += new TextEncoder().encode(ch).length;
-    if (ch === "\n") {
-      line += 1;
-      column = 1;
-    } else {
-      column += ch.length; // UTF-16 units — what Monaco columns count
-    }
-  }
-  return { lineNumber: line, column };
-}
+ * mapped exactly (see `bytePosition` in `providers.ts`) rather than assumed
+ * equal, so non-ASCII sources square. --- */
 
 const SEVERITY: Record<string, monaco.MarkerSeverity> = {
   error: monaco.MarkerSeverity.Error,
