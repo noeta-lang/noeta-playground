@@ -32,6 +32,9 @@ jobs:
       contents: read
     steps:
       - name: Resolve latest Noeta release tag
+        # Runs before "Checkout site" creates ./site, so it must not inherit the default
+        # working-directory: site (which wouldn't exist yet). It only curls the API + writes $GITHUB_ENV.
+        working-directory: ${{ github.workspace }}
         # NOETA_VERSION is baked into the built HTML via SITE.version (the header's version pill), and
         # it is also the ref the engine is built from below — so the playground runs the *released*
         # engine, not unreleased work on main. A release dispatch carries the tag; push / manual runs
