@@ -26,7 +26,20 @@ const { title, description, path } = Astro.props;
     <div class="field" aria-hidden="true"></div>
     <header class="site-head">
       <div class="wrap">
-        <a class="wordmark" href="/">noeta<span class="tld">.dev/play</span></a>
+        <div class="brand">
+          <a class="wordmark" href="/">noeta<span class="tld">.dev/play</span></a>
+          {
+            SITE.version && (
+              <a
+                class="version-pill"
+                href={`${SITE.links.github}/releases/tag/${SITE.version}`}
+                title={`Noeta ${SITE.version}`}
+              >
+                {SITE.version}
+              </a>
+            )
+          }
+        </div>
         <nav class="site-nav" aria-label="Site">
           <a href={SITE.links.home}>noeta.dev</a>
           <a href={SITE.links.docs}>docs</a>
