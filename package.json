@@ -16,6 +16,7 @@
     "deploy": "pnpm run build && wrangler deploy",
     "typecheck": "astro check",
     "check:overflow": "node node_modules/@noeta/theme/scripts/check-overflow.mjs --dist dist",
+    "check:chrome": "node node_modules/@noeta/theme/scripts/check-chrome.mjs --dist dist",
     "test": "node --test 'src/lib/*.test.ts'"
   },
   "dependencies": {
