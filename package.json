@@ -2,7 +2,7 @@
   "name": "noeta-playground",
   "version": "0.1.0",
   "private": true,
-  "description": "The Noeta language playground — the real toolchain in your browser: run, format, IDE smarts, and a debugger, all client-side WASM. play.noeta.dev.",
+  "description": "The Noeta language playground \u2014 the real toolchain in your browser: run, format, IDE smarts, and a debugger, all client-side WASM. play.noeta.dev.",
   "type": "module",
   "packageManager": "pnpm@11.13.1",
   "scripts": {
@@ -15,6 +15,7 @@
     "preview": "pnpm run build && wrangler dev",
     "deploy": "pnpm run build && wrangler deploy",
     "typecheck": "astro check",
+    "check:overflow": "node node_modules/@noeta/theme/scripts/check-overflow.mjs --dist dist",
     "test": "node --test 'src/lib/*.test.ts'"
   },
   "dependencies": {
