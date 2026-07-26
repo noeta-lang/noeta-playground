@@ -585,8 +585,10 @@
 /* --- Responsive --- */
 
 @media (max-width: 60rem) {
+  /* minmax(0, 1fr), not 1fr: a bare 1fr keeps min-width:auto, so the column
+   * floors at its widest item's min-content instead of the viewport. */
   .bench {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .editor-host {
