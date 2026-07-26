@@ -88,11 +88,16 @@
   color: var(--text-1);
   cursor: pointer;
   user-select: none;
-  padding: 0.3rem 0.4rem;
+  /* The whole label is the target — the 13px checkbox alone is far below any
+   * usable touch size, and the toolbar sits next to Run/Debug on a phone. */
+  min-height: 44px;
+  padding: 0.3rem 0.5rem;
 }
 
 .toggle input {
   accent-color: var(--accent);
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .examples {
@@ -584,7 +589,10 @@
 
 /* --- Responsive --- */
 
-@media (max-width: 60rem) {
+/* 56rem is the shared --bp-stack (see theme.css); this used to fold at 60rem,
+ * which is why the workbench collapsed at a different width than the docs and
+ * registry layouts. */
+@media (max-width: 56rem) {
   /* minmax(0, 1fr), not 1fr: a bare 1fr keeps min-width:auto, so the column
    * floors at its widest item's min-content instead of the viewport. */
   .bench {
