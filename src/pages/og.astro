@@ -7,7 +7,7 @@
  * color-scheme. */
 import "@noeta/theme/fonts.css";
 import "@noeta/theme/theme.css";
-import { highlightNoeta } from "@noeta/theme/highlight";
+import { highlightNoeta } from "../lib/noeta-highlight.mjs";
 
 const SNIPPET = `fn fib(n: int): int {
   if n < 2 { return n; }
@@ -15,7 +15,7 @@ const SNIPPET = `fn fib(n: int): int {
 }
 
 echo "fib(16) = \${fib(16)}"`;
-const code = highlightNoeta(SNIPPET);
+const code = await highlightNoeta(SNIPPET);
 ---
 
 <!doctype html>

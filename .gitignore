@@ -6,3 +6,5 @@ public/engine/
 *.log
 .dev.vars
 .DS_Store
+syntaxes/
+.noeta-grammar.tmp/
