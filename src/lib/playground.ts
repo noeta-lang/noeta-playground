@@ -56,7 +56,7 @@ function setStatus(text: string, tone: "" | "ok" | "err" = "") {
 registerNoeta();
 
 const editor = monaco.editor.create($("editor"), {
-  value: decodeShare(location.hash.slice(1)) ?? EXAMPLES[DEFAULT_EXAMPLE]!,
+  value: decodeShare(location.hash.slice(1)) ?? EXAMPLES[DEFAULT_EXAMPLE]!.source,
   language: LANGUAGE_ID,
   theme: editorThemeName(),
   fontFamily: '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace',
@@ -519,7 +519,7 @@ for (const name of Object.keys(EXAMPLES)) {
 examplePicker.value = DEFAULT_EXAMPLE;
 examplePicker.addEventListener("change", () => {
   stopDebugging(); // end any live session before swapping the program out from under it
-  model.setValue(EXAMPLES[examplePicker.value] ?? "");
+  model.setValue(EXAMPLES[examplePicker.value]?.source ?? "");
   breakpoints.set([]);
   clearOutput();
   setStatus("ready");
