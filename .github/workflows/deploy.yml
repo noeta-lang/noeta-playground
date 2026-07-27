@@ -118,6 +118,14 @@ jobs:
       - name: Build (engine sync + site + OG image)
         run: pnpm run build
 
+      # The curated samples are the first Noeta most visitors run, and nothing else in this
+      # repo compiles them — so a language change in the engine rots them silently. This
+      # drives the just-synced engine over every one of them (see scripts/check-examples.mjs)
+      # and fails the deploy rather than shipping a page that greets people with an error.
+      # It runs on the release dispatch too, which is exactly when the engine changes under them.
+      - name: Gate the playground examples against the shipped engine
+        run: pnpm run check:examples
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v4
         with:
