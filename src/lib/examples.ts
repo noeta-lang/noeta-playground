@@ -26,21 +26,63 @@ export const EXAMPLES: Record<string, Example> = {
   welcome: {
     expect: "clean",
     exit: 0,
+    // Deliberately NOT recursive. The first thing a visitor is likely to click is Debug, and a
+    // recursive `fib` stacks a dozen identical frames where every local looks the same — you
+    // cannot tell what you are looking at. A flat loop over a list gives one frame per step with
+    // locals that visibly change, and covers the surface worth showing first: an enum with a
+    // payload, `match` as an expression binding that payload, the `if … then … else` conditional
+    // expression, `~` concatenation, and `${…}` interpolation.
     source: `// Welcome to the Noeta playground — the real toolchain, running in
 // your browser. Hit Run (Ctrl+Enter), hover a name for its type, or
-// click the gutter to set a breakpoint and hit Debug.
+// set a breakpoint on the \`label = …\` line and hit Debug to watch
+// each event go through.
 
-fn fib(n: int): int {
-  if n < 2 { return n }
-  a = fib(n - 1)
-  b = fib(n - 2)
-  return a + b
+enum Event {
+    Started
+    Retried(attempt: int)
+    Failed(reason: string)
 }
 
-for n in [8, 12, 16] {
-  value = fib(n)
-  echo "fib(\${n}) = \${value}"
+// \`match\` is an expression, and it binds a variant's payload by name.
+fn describe(event: Event): string {
+    return match event {
+        Event.Started => "started",
+        Event.Retried(n) => "retry #\${n}",
+        Event.Failed(why) => "failed: \${why}",
+    }
 }
+
+fn is_failure(event: Event): bool {
+    return match event {
+        Event.Failed(_) => true,
+        _ => false,
+    }
+}
+
+events = [
+    Event.Started,
+    Event.Retried(1),
+    Event.Retried(2),
+    Event.Failed("timeout"),
+]
+
+mut step = 1
+mut failures = 0
+
+for event in events {
+    // \`if … then … else\` is the conditional *expression*; \`~\` joins
+    // strings, and \`\${…}\` interpolates any value into one.
+    label = if step == 1 then "first" else "step \${step}"
+    echo label ~ " · " ~ describe(event)
+
+    if is_failure(event) {
+        failures = failures + 1
+    }
+    step = step + 1
+}
+
+noun = if failures == 1 then "failure" else "failures"
+echo if failures == 0 then "all clear" else "\${failures} \${noun} in \${events.len()} events"
 `,
   },
   "seeded random": {

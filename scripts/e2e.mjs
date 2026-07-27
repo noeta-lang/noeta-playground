@@ -44,8 +44,11 @@ assert.equal(editorBg, "#191715");
 await page.click("#run");
 await page.waitForFunction(() => document.getElementById("exit")?.textContent?.startsWith("exit"), null, { timeout: 15000 });
 const stdout = await page.textContent("#stdout");
-assert.match(stdout, /fib\(8\) = 21/);
-assert.match(stdout, /fib\(16\) = 987/);
+// One line per event (the `match` arm + `~` concatenation) and the pluralised summary (the
+// `if … then … else` expression) — the two halves the sample exists to demonstrate.
+assert.match(stdout, /first · started/);
+assert.match(stdout, /step 4 · failed: timeout/);
+assert.match(stdout, /1 failure in 4 events/);
 assert.equal(await page.textContent("#exit"), "exit 0");
 console.log("✓ run: welcome example output correct");
 if (SHOTS) await page.screenshot({ path: `${SHOTS}/play-run.png` });
